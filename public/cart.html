@@ -1,1 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8f8f8;
+    }
+    header {
+      background: #222;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+    header a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      background: #007bff;
+      padding: 6px 12px;
+      border-radius: 5px;
+    }
+    header a:hover {
+      background: #0056b3;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background: #f4f4f4;
+    }
+    td img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .total {
+      text-align: right;
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    button {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 5px;
+      background: #dc3545;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #a71d2a;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🛒 Your Cart</h1>
+    <a href="dashboard.html">⬅ Back to Shop</a>
+  </header>
 
+  <div class="container">
+    <table id="cart-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody id="cart-body">
+        <!-- Cart items will be injected here -->
+      </tbody>
+    </table>
+    <div class="total" id="cart-total">Total: ₹0</div>
+  </div>
+
+  <script>
+    async function loadCart() {
+      try {
+        const res = await fetch("/api/cart");
+        const cartItems = await res.json();
+
+        const tbody = document.getElementById("cart-body");
+        tbody.innerHTML = "";
+
+        let total = 0;
+
+        cartItems.forEach(item => {
+          const row = document.createElement("tr");
+
+          const product = item.product;
+          const quantity = item.quantity;
+          const price = product.price;
+          const subtotal = price * quantity;
+          total += subtotal;
+
+          row.innerHTML = `
+            <td><img src="${product.image || '/images/placeholder.png'}" alt="${product.name}"></td>
+            <td>${product.name}</td>
+            <td>₹${price}</td>
+            <td>${quantity}</td>
+            <td>₹${subtotal}</td>
+          `;
+
+          tbody.appendChild(row);
+        });
+
+        document.getElementById("cart-total").textContent = "Total: ₹" + total;
+      } catch (error) {
+        console.error("Error loading cart:", error);
+      }
+    }
+
+    loadCart();
+  </script>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grocery Shop</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+    }
+
+    /* Navbar */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #56ab2f;
+      color: white;
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav .left {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    nav .right {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    nav button {
+      padding: 6px 12px;
+      background: #ff6f00;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    nav button:hover {
+      background: #e65100;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    /* Product grid */
+    .products {
+      flex: 3;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .product-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .product-card:hover {
+      transform: scale(1.05);
+    }
+
+    .product-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+
+    .product-card h3 {
+      font-size: 16px;
+      margin: 5px 0;
+    }
+
+    .product-card p {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .product-card button {
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: #ff6f00;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .product-card button:hover {
+      background: #e65100;
+    }
+
+    /* Cart panel */
+    .cart {
+      flex: 1;
+      background: #fff;
+      border-left: 2px solid #ddd;
+      padding: 20px;
+      box-shadow: -2px 0px 10px rgba(0,0,0,0.1);
+      max-height: 100vh;
+      overflow-y: auto;
+      position: sticky;
+      top: 65px;
+    }
+
+    .cart h2 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #333;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .cart-total {
+      font-weight: bold;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .checkout-btn {
+      margin-top: 15px;
+      width: 100%;
+      padding: 10px;
+      background: green;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Delivery form */
+    .delivery-form {
+      margin-top: 15px;
+      display: none;
+    }
+
+    .delivery-form input {
+      display: block;
+      margin: 8px 0;
+      padding: 8px;
+      width: 95%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .confirm-btn {
+      background: #ff6f00;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .confirm-btn:hover {
+        background: #e65100;
+    }
+
+    .order-summary {
+      margin-top: 20px;
+      padding: 10px;
+      background: #e8f5e9;
+      border-radius: 5px;
+      display: none;
+      color: #333;
+    }
+    .order-summary h3 {
+        color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="left">
+      🏠 Home
+    </div>
+    <div class="right">
+      <span id="welcomeUser"></span>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Products will be injected dynamically -->
+    <section class="products" id="productList"></section>
+
+    <!-- Cart -->
+    <aside class="cart">
+      <h2>Your Cart</h2>
+      <div id="cartItems"></div>
+      <div class="cart-total">Total: ₹<span id="cartTotal">0</span></div>
+      <button class="checkout-btn" id="checkoutBtn">Checkout</button>
+
+      <!-- Delivery form -->
+      <div class="delivery-form" id="deliveryForm">
+        <h3>Delivery Address</h3>
+        <input type="text" id="state" placeholder="Enter State" required>
+        <input type="text" id="pincode" placeholder="Enter Pin Code" required>
+        <input type="text" id="village" placeholder="Enter Village" required>
+        <button class="confirm-btn" id="confirmBtn">Confirm Order</button>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="order-summary" id="orderSummary"></div>
+    </aside>
+  </div>
+
+  <script>
+    // ✅ Check login
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) {
+      window.location.href = "/login"; // not logged in → back to login
+    } else {
+      document.getElementById("welcomeUser").textContent = "Welcome, " + userEmail;
+    }
+
+    function logout() {
+      localStorage.removeItem("userEmail");
+      window.location.href = "/login";
+    }
+
+    // Product Data
+    const products = [
+      { name: "Apple", price: 120, img: "https://img.icons8.com/color/96/apple.png", unit: "/kg" },
+      { name: "Banana", price: 60, img: "https://img.icons8.com/color/96/banana.png", unit: "/dozen" },
+      { name: "Tomato", price: 50, img: "https://img.icons8.com/color/96/tomato.png", unit: "/kg" },
+      { name: "Milk", price: 50, img: "https://img.icons8.com/color/96/milk-bottle.png", unit: "/litre" },
+      { name: "Rice", price: 60, img: "https://img.icons8.com/color/96/rice-bowl.png", unit: "/kg" },
+      { name: "Chicken", price: 220, img: "https://img.icons8.com/color/96/chicken.png", unit: "/kg" },
+      { name: "Eggs", price: 70, img: "https://img.icons8.com/color/96/eggs.png", unit: "/dozen" },
+      { name: "Cheese", price: 250, img: "https://img.icons8.com/color/96/cheese.png", unit: "/500g" },
+      { name: "Bread", price: 40, img: "https://img.icons8.com/color/96/bread.png", unit: "/loaf" },
+      { name: "Butter", price: 200, img: "https://img.icons8.com/color/96/butter.png", unit: "/500g" }
+    ];
+
+    const productList = document.getElementById("productList");
+    const cart = [];
+    const cartItemsDiv = document.getElementById("cartItems");
+    const cartTotalSpan = document.getElementById("cartTotal");
+    const checkoutBtn = document.getElementById("checkoutBtn");
+    const deliveryForm = document.getElementById("deliveryForm");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const orderSummary = document.getElementById("orderSummary");
+
+    // Render products dynamically
+    function renderProducts() {
+      productList.innerHTML = "";
+      products.forEach(p => {
+        const card = document.createElement("div");
+        card.classList.add("product-card");
+        card.innerHTML = `
+          <img src="${p.img}" alt="${p.name}">
+          <h3>${p.name}</h3>
+          <p>₹${p.price} ${p.unit}</p>
+          <button>Add to Cart</button>
+        `;
+        const btn = card.querySelector("button");
+        btn.addEventListener("click", () => addToCart(p));
+        productList.appendChild(card);
+      });
+    }
+
+    // Add to cart
+    function addToCart(product) {
+      const existingItem = cart.find(item => item.name === product.name);
+      if (existingItem) {
+        existingItem.qty += 1;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
+      renderCart();
+    }
+
+    // Render cart
+    function renderCart() {
+      cartItemsDiv.innerHTML = "";
+      let total = 0;
+      cart.forEach(item => {
+        total += item.price * item.qty;
+        const div = document.createElement("div");
+        div.classList.add("cart-item");
+        div.textContent = `${item.name} (x${item.qty}) - ₹${item.price * item.qty}`;
+        cartItemsDiv.appendChild(div);
+      });
+      cartTotalSpan.textContent = total;
+    }
+
+    // Checkout
+    checkoutBtn.addEventListener("click", () => {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      deliveryForm.style.display = "block";
+      orderSummary.style.display = "none";
+    });
+
+    // Confirm Order
+    confirmBtn.addEventListener("click", () => {
+      const state = document.getElementById("state").value;
+      const pincode = document.getElementById("pincode").value;
+      const village = document.getElementById("village").value;
+      const total = cartTotalSpan.textContent;
+
+      if (!state || !pincode || !village) {
+        alert("Please fill all fields!");
+        return;
+      }
+
+      orderSummary.style.display = "block";
+      orderSummary.innerHTML = `
+        <h3>✅ Order Placed!</h3>
+        <p>Your order will be delivered soon to:</p>
+        <p><b>Village:</b> ${village}</p>
+        <p><b>State:</b> ${state}</p>
+        <p><b>Pin Code:</b> ${pincode}</p>
+        <p><b>Total Amount:</b> ₹${total}</p>
+      `;
+
+      deliveryForm.style.display = "none";
+      cart.length = 0;
+      renderCart();
+    });
+
+    // Initial load
+    renderProducts();
+    renderCart();
+  </script>
+</body>
+</html>
