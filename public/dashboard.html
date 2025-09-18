@@ -204,7 +204,7 @@
     </div>
     <div class="right">
       <span id="welcomeUser"></span>
-      <button onclick="logout()">Logout</button>
+      <button id="logoutBtn">Logout</button>
     </div>
   </nav>
 
@@ -237,17 +237,18 @@
     // ✅ Check login
     const userEmail = localStorage.getItem("userEmail");
     if (!userEmail) {
-      window.location.href = "/login"; // not logged in → back to login
+      window.location.href = "login.html"; // redirect correctly
     } else {
       document.getElementById("welcomeUser").textContent = "Welcome, " + userEmail;
     }
 
-    function logout() {
+    // ✅ Logout fix
+    document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("userEmail");
-      window.location.href = "/login";
-    }
+      window.location.href = "login.html";
+    });
 
-    // Product Data
+    // ✅ More products added
     const products = [
       { name: "Apple", price: 120, img: "https://img.icons8.com/color/96/apple.png", unit: "/kg" },
       { name: "Banana", price: 60, img: "https://img.icons8.com/color/96/banana.png", unit: "/dozen" },
@@ -258,7 +259,13 @@
       { name: "Eggs", price: 70, img: "https://img.icons8.com/color/96/eggs.png", unit: "/dozen" },
       { name: "Cheese", price: 250, img: "https://img.icons8.com/color/96/cheese.png", unit: "/500g" },
       { name: "Bread", price: 40, img: "https://img.icons8.com/color/96/bread.png", unit: "/loaf" },
-      { name: "Butter", price: 200, img: "https://img.icons8.com/color/96/butter.png", unit: "/500g" }
+      { name: "Butter", price: 200, img: "https://img.icons8.com/color/96/butter.png", unit: "/500g" },
+      { name: "Potato", price: 40, img: "https://img.icons8.com/color/96/potato.png", unit: "/kg" },
+      { name: "Onion", price: 45, img: "https://img.icons8.com/color/96/onion.png", unit: "/kg" },
+      { name: "Carrot", price: 80, img: "https://img.icons8.com/color/96/carrot.png", unit: "/kg" },
+      { name: "Fish", price: 300, img: "https://img.icons8.com/color/96/fish-food.png", unit: "/kg" },
+      { name: "Mutton", price: 600, img: "https://img.icons8.com/color/96/sheep.png", unit: "/kg" },
+      { name: "Curd", price: 60, img: "https://img.icons8.com/color/96/yogurt.png", unit: "/kg" }
     ];
 
     const productList = document.getElementById("productList");

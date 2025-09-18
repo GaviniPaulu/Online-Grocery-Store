@@ -6,8 +6,9 @@
 }
 
 body, html {
-  font-family: Arial, sans-serif;
+  font-family: 'Arial', sans-serif;
   height: 100%;
+  background: linear-gradient(135deg, #ffe259, #ffa751); /* Vibrant gradient background */
 }
 
 /* Navbar */
@@ -16,18 +17,22 @@ body, html {
   position: fixed;
   top: 0;
   left: 0;
-  background: rgba(0,0,0,0.5);
+  background: linear-gradient(90deg, #ff416c, #ff4b2b); /* Colorful gradient */
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px 40px;
   z-index: 1000;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 
 .navbar .logo {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: bold;
+  text-shadow: 1px 1px 3px #000;
 }
 
 .navbar nav a {
@@ -36,48 +41,64 @@ body, html {
   text-decoration: none;
   font-size: 16px;
   padding: 8px 15px;
-  border: 1px solid white;
-  border-radius: 4px;
+  border-radius: 8px;
   transition: 0.3s;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .navbar nav a:hover {
-  background: white;
-  color: black;
+  background: #fff;
+  color: #ff416c;
+  font-weight: bold;
+  transform: scale(1.1);
 }
 
 /* Hero Section */
 .hero {
   height: 100vh;
-  background: url("images/grocery-bg.jpg") no-repeat center center/cover;
+  background: linear-gradient(135deg, #1fd1f9, #b621fe); /* Vibrant gradient background instead of image */
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: white;
+  color: #fff;
   padding: 0 20px;
+  animation: bgAnimation 15s infinite alternate;
+}
+
+@keyframes bgAnimation {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
 }
 
 .hero-content h1 {
-  font-size: 50px;
+  font-size: 60px;
   margin-bottom: 20px;
+  color: #fff200; /* Bright yellow title */
+  text-shadow: 2px 2px 10px #ff00ff;
 }
 
 .hero-content p {
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 30px;
+  color: #00ffea;
+  text-shadow: 1px 1px 5px #ff0000;
 }
 
 .shop-btn {
-  background: orange;
+  background: linear-gradient(90deg, #ff6a00, #ee0979); /* Gradient button */
   color: white;
-  padding: 12px 25px;
-  font-size: 18px;
+  padding: 15px 30px;
+  font-size: 20px;
   text-decoration: none;
-  border-radius: 5px;
-  transition: 0.3s;
+  border-radius: 10px;
+  transition: 0.4s;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 .shop-btn:hover {
-  background: darkorange;
+  background: linear-gradient(90deg, #ee0979, #ff6a00);
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
 }
